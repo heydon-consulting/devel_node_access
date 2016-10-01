@@ -1036,7 +1036,7 @@ class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
         return $nid;
       }
     }
-    return '—';
+    return '&mdash;';
   }
 
   /**
