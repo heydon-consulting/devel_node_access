@@ -192,7 +192,15 @@ class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $rows = array();
       foreach ($query->execute() as $row) {
         $explained = \Drupal::moduleHandler()->invokeAll('node_access_explain', [$row]);
-        $node_title = self::get_node_title($nodes[$row->nid]);
+        if (isset($nodes[$row->nid])) {
+          $node_title = self::get_node_title($nodes[$row->nid]);
+        }
+        elseif ($row->nid == 0) {
+          $node_title = 'Global access';
+        }
+        else {
+          $node_title = 'Unknown';
+        }
         $title_attribute = \Drupal::request()->getRequestUri();
         if (Unicode::strlen($node_title) > 20) {
           $title_attribute = $title_attribute . ': ' . $node_title;
@@ -343,10 +351,11 @@ class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
                 else {
                   // At least one module acknowledged the record,
                   // attribute it to the first one.
+                  $keys = $acknowledged;
                   $fixed_record += array(
                     'priority' => '&ndash;',
                     'state'    => 'static',
-                    '#module'  => reset(array_keys($acknowledged)),
+                    '#module'  => reset($keys),
                   );
                 }
               }
@@ -659,7 +668,7 @@ class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $langcode = $node->langcode->value;
       $language = language_load($langcode);
       $node_type = node_type_load($node->bundle());
-      $headers = array(t('username'), '<span title="' . t("Create '@langname'-language nodes of the '@Node_type' type.", array('@langname' => $language->name, '@Node_type' => $node_type->name)) . '">' . t('create') . '</span>', t('view'), t('update'), t('delete'));
+      $headers = array(t('username'), '<span title="' . t("Create '@langname'-language nodes of the '@Node_type' type.", array('@langname' => $language->name, '@Node_type' => $node_type->label())) . '">' . t('create') . '</span>', t('view'), t('update'), t('delete'));
       $rows = array();
       // Determine whether to use Ajax or pre-populate the tables.
       if ($ajax = \Drupal::config('devel_node_access.settings')->get('user_ajax')) {
