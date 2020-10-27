@@ -2,7 +2,7 @@
     "name": "heydon/devel_node_access",
     "description": "Developer blocks and page illustrating relevant node_access records.",
     "type": "drupal-module",
-    "license": "GPL",
+    "license": "GPL-2.0-or-later",
     "require": {
         "drupal/devel": "^4.0"
     }
